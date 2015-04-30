@@ -31,7 +31,8 @@ public class Logic {
     private static double PIXEL_TO_STEP_CONVERSION; // Dividend bei Pixel zu Drehturmschritten
     private static String DC_STOP_SIGNAL; // DC Motor Stop Signal
     private static int BALL_COUNTER; // Anzahl Bälle
-    private static String LOGLEVEL;
+    private static String LOGLEVEL; //LogLevel
+    private static int SLEEPTIME; //Zeit die zwischen den Release Balls geschlafen werden soll
 
     private static final String LIGHT_BARRIER = "../PeripherieAnsteuerung/Light_Barrier.py";
     private static final String CAMERA = "../PeripherieAnsteuerung/Camera.py";
@@ -63,14 +64,15 @@ public class Logic {
     }
 
     public void loadVariableContent() {
-        TURRET_DIST_MIDDLE = Integer.parseInt(ReadPropertyFile.getProperties().getProperty("TURRET_DIST_MIDDLE"));
-        MM_TO_STEP_CONVERSION = Double.parseDouble(ReadPropertyFile.getProperties().getProperty("MM_TO_STEP_CONVERSION"));
-        PIXEL_TO_STEP_CONVERSION = Double.parseDouble(ReadPropertyFile.getProperties().getProperty("PIXEL_TO_STEP_CONVERSION"));
-        DC_STOP_SIGNAL = ReadPropertyFile.getProperties().getProperty("DC_STOP_SIGNAL");
-        BALL_COUNTER = Integer.parseInt(ReadPropertyFile.getProperties().getProperty("BALL_COUNTER"));
-        dcSPEED = ReadPropertyFile.getProperties().getProperty("dcSPEED");
-        LOGLEVEL = ReadPropertyFile.getProperties().getProperty("LogLevel");
-        System.out.println(LOGLEVEL);
+        TURRET_DIST_MIDDLE = Integer.parseInt(PropertyFileHandler.getPropertyFile("TURRET_DIST_MIDDLE"));
+        MM_TO_STEP_CONVERSION = Double.parseDouble(PropertyFileHandler.getPropertyFile("MM_TO_STEP_CONVERSION"));
+        PIXEL_TO_STEP_CONVERSION = Double.parseDouble(PropertyFileHandler.getPropertyFile("PIXEL_TO_STEP_CONVERSION"));
+        DC_STOP_SIGNAL = PropertyFileHandler.getPropertyFile("DC_STOP_SIGNAL"); 
+        BALL_COUNTER = Integer.parseInt(PropertyFileHandler.getPropertyFile("BALL_COUNTER"));
+        dcSPEED = PropertyFileHandler.getPropertyFile("dcSPEED");
+        LOGLEVEL = PropertyFileHandler.getPropertyFile("LogLevel");
+        SLEEPTIME = Integer.parseInt(PropertyFileHandler.getPropertyFile("SLEEPTIME"));
+
         PrenLogger.setCurrentLoglevel(PrenLogger.LogLevel.valueOf(LOGLEVEL));
 
         logger.log(PrenLogger.LogLevel.DEBUG, "Folgende Werte wurden aus dem config.properties geladen: \n"
@@ -80,7 +82,8 @@ public class Logic {
                 + "DC_STOP_SIGNAL : " + DC_STOP_SIGNAL + "\n"
                 + "BALL_COUNTER : " + BALL_COUNTER + "\n"
                 + "dcSPEED : " + dcSPEED + "\n"
-                + "LogLevel : " + LOGLEVEL);
+                + "LogLevel : " + LOGLEVEL + "\n"
+                + "SleepTime : " + SLEEPTIME);
     }
 
     /**
@@ -127,7 +130,7 @@ public class Logic {
         for (int i = 1; i <= BALL_COUNTER; i++) {
             releaseBalls();
             logger.log(PrenLogger.LogLevel.DEBUG, "Ball " + i + " geschossen");
-            Thread.sleep(1000);
+            Thread.sleep(SLEEPTIME);
         }
         dcEngineStop();
     }
@@ -183,8 +186,6 @@ public class Logic {
      */
     private void startDCEngine() throws InterruptedException, IOException {
         ArrayList<String> argsP = new ArrayList<>();
-
-        //Wie schnell muss der DC drehen?!?!?!?!?!?
         argsP.add(getDcSPEED());
         logger.log(PrenLogger.LogLevel.DEBUG, "getDCSPeed liefert: " + getDcSPEED());
         DCEngineHandler dcEngineHandler = new DCEngineHandler(UART, argsP);

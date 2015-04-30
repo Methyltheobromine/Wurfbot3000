@@ -70,12 +70,14 @@
     -->
 
 
-    <target name="-post-jar">
+    <target name="-post-dist">
         <delete dir="Jar"/>
         <mkdir dir="Jar" />
+        
         <copy todir="Jar">
             <fileset dir="dist"/>
         </copy>
+        
         <copy file="config.properties" todir="Jar"/> 
     </target>
 </project>

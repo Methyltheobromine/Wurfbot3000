@@ -26,6 +26,7 @@ import javax.websocket.server.ServerEndpoint;
 public class WurfbotService {
 
     private Logic logicController;
+
     enum MsgType {
 
         START,
@@ -33,7 +34,7 @@ public class WurfbotService {
         INITPOS,
         CONF
     }
-    
+
     /**
      * @OnOpen allows us to intercept the creation of a new session. The session
      * class allows us to send data to the user. In the method onOpen, we'll let
@@ -57,10 +58,11 @@ public class WurfbotService {
     @OnMessage
     public void onMessage(String message, Session session) {
         System.out.println("Message from " + session.getId() + ": " + message);
+        String msg = handleMessage(message);
         try {
-            session.getBasicRemote().sendText("Serverin du Spasti!");
+            session.getBasicRemote().sendText(msg);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(WurfbotService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -80,9 +82,12 @@ public class WurfbotService {
             return "Invalid input!";
         }
 
-        MsgType msgType = MsgType.valueOf(message);
+        String[] splittedMessage = message.split(":");        
+        MsgType msgType = MsgType.valueOf(splittedMessage[0]);
         switch (msgType) {
             case CONF:
+                PropertyConfigurationHandler propertyConfigurationHandler = new PropertyConfigurationHandler();
+                feedback = propertyConfigurationHandler.setValue(splittedMessage[1]);
                 break;
             case INITPOS:
                 break;
@@ -98,25 +103,25 @@ public class WurfbotService {
 
         return feedback;
     }
-    
+
     private String startMainLogic() {
-        String feedback="";
+        String feedback = "";
         try {
             logicController = new Logic();
             logicController.initialRun();
             System.out.println("-- FFFFIIIINNNNIIIIISSSSHHHHHHHHH --");
-        } catch (IOException | InterruptedException ex) {            
+        } catch (IOException | InterruptedException ex) {
             // ToDO: start failover logic
             Logger.getLogger(PrenStarter.class.getName()).log(Level.SEVERE, null, ex);
             return ex.getMessage();
-        }     
-        
+        }
+
         return feedback;
-    }  
-    
-    private Logic getLogicController() throws IOException, InterruptedException{
-        if(logicController==null){
-            logicController=new Logic();
+    }
+
+    private Logic getLogicController() throws IOException, InterruptedException {
+        if (logicController == null) {
+            logicController = new Logic();
         }
         return logicController;
     }
