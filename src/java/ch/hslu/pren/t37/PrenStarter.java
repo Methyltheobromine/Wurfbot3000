@@ -6,9 +6,6 @@
 package ch.hslu.pren.t37;
 
 import ch.hslu.pren.t37.logic.Logic;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PrenStarter {
 
@@ -17,13 +14,11 @@ public class PrenStarter {
      * @throws java.lang.Exception
      */
     public static void main(String[] args) throws Exception {
-        try {
-            Logic controllerLogic = new Logic();
-            controllerLogic.initialRun();
-            System.out.println("-- FFFFIIIINNNNIIIIISSSSHHHHHHHHH --");
-        } catch (IOException | InterruptedException ex) {
-            // ToDO: start failover logic
-            Logger.getLogger(PrenStarter.class.getName()).log(Level.SEVERE, null, ex);
-        }       
+        System.out.println("-- Start --");
+
+        Logic controllerLogic = new Logic();
+        controllerLogic.wurfbot3000Start();
+
+        System.out.println("-- Finish --");   
     }
 }

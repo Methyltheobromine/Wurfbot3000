@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class PropertyFileHandler {
 
-    private static String fileName = "config.properties";
+    private static String fileName = "/home/pi/Wurfbot/config.properties";
 
     /**
      * Constructor.
@@ -49,6 +49,7 @@ public class PropertyFileHandler {
         try {
             Properties prop = new Properties();
             File f = new File(fileName);
+            System.out.println(f.getAbsolutePath());
             prop.load(new FileReader(f));
             prop.setProperty(key, value);
             OutputStream output = new FileOutputStream(f);

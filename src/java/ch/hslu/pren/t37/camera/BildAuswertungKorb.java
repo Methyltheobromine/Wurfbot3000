@@ -28,11 +28,11 @@ public class BildAuswertungKorb {
     public int bildAuswerten() {
       
         //Bild in dem gesucht werden soll
-        String inFile = "../camera.jpg"; 
+        String inFile = "/home/pi/Wurfbot/Template_Korb/camera.jpg"; 
         //das Bild dass im infile gesucht wird
-        String templateFile = "../Template_Korb/korb.jpg";
+        String templateFile = "/home/pi/Wurfbot/Template_Korb/korb.jpg";
         //Lösung wird in diesem Bild präsentiert
-        String outFile = "../LoesungsBild.jpg";
+        String outFile = "/home/pi/Wurfbot/Template_Korb/LoesungsBild.jpg";
         //Überprüfungswert wird gesetzt
         int match_method = Imgproc.TM_CCOEFF_NORMED;
 

@@ -1,0 +1,92 @@
+/* ================ Allgemein ================ */
+
+#website {
+    max-width:80%;
+    margin:10px  auto;
+    font-size:14px;
+}
+
+/* ================ KOPFBEREICH ================ */
+
+#header {
+    padding:20px;
+    background:#8CC0DD;
+}
+
+#header h1{
+    font-size:18px;
+    color: #564B47;
+    font-style:normal;
+}
+
+#header p{
+    font: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size:38px;
+    font-weight:bolder;
+    color: #564B47;
+}
+
+/* ================ INHALT ================ */
+
+#main{
+    margin-bottom:10px auto;
+    margin-right:10px auto;
+    margin-left:10px auto;
+    width:100%;
+    height:400px;
+    float:left;
+    background:#ccc;
+    font-family:'Oswald', sans-serif;
+}
+
+.button_klasse {
+    padding:5px;
+    margin-top:15px;
+    margin-bottom:15px;
+    font-size:14px;
+    border: 1px solid #6AA9DD;
+    color:#000000;
+}
+
+.blau{
+    background-color: #8CC0DD;
+}
+
+.gruen{
+    background-color: #008000;
+}
+
+.rot{
+    background-color: #DC143C;
+}
+
+/* ================ BILDER ================ */
+#buttonAjaxPics{
+    text-align:center;
+    vertical-align:middle;	
+}
+
+div img{
+    height:100px;
+    width:100px;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:30px;
+    -webkit-transition-duration: 1.0s;
+    -ms-transition-duration: 1.0s;
+    -moz-transition-duration: 1.0s;
+}
+
+div img:hover{
+    -webkit-transform:scale(2.9);
+    -webkit-box-shadow:0px 0px 30px #8CC0DD;
+
+    -ms-transform:scale(2.9);
+    -ms-box-shadow:0px 0px 30px #8CC0DD;
+
+    -moz-transform:scale(2.9);
+    -moz-box-shadow:0px 0px 30px #8CC0DD;
+}
+
+

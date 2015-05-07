@@ -22,27 +22,27 @@ public class Logic {
     private BildVonWebcamAufnehmen _bvw;
     private BildAuswertungKorb _bak;
     private StepperTurret _st;
-    private UltrasonicHandler _uh;
     private StepperMagazine _sM;
     private PrenLogger logger;
 
-    private static int TURRET_DIST_MIDDLE; // Wert bei Initialisierung um in die Mitte zu fahren
-    private static double MM_TO_STEP_CONVERSION; // Dividend bei Millimeter zu Drehturmschritten 
+    //Autonomer Ablauf
     private static double PIXEL_TO_STEP_CONVERSION; // Dividend bei Pixel zu Drehturmschritten
     private static String DC_STOP_SIGNAL; // DC Motor Stop Signal
     private static int BALL_COUNTER; // Anzahl Bälle
+    private static String dcSPEED; //RPM Speed of DC-Engine 000 = Stop 199 = Max Speed
     private static String LOGLEVEL; //LogLevel
     private static int SLEEPTIME; //Zeit die zwischen den Release Balls geschlafen werden soll
 
-    private static final String LIGHT_BARRIER = "../PeripherieAnsteuerung/Light_Barrier.py";
-    private static final String CAMERA = "../PeripherieAnsteuerung/Camera.py";
-    private static final String TURRET = "../PeripherieAnsteuerung/Turret.py";
-    private static final String UART = "../PeripherieAnsteuerung/UART.py";
-    private static final String INITIALIZATION_WURFBOT = "../PeripherieAnsteuerung/Turret_Position_Initialization.py";
-    /**
-     * RPM Speed of DC-Engine 000 = Stop 199 = Max Speed
-     */
-    private static String dcSPEED;
+    //Initialization
+    private static int TURRET_DIST_MIDDLE; // Wert bei Initialisierung um in die Mitte zu fahren
+    private static String STEPPS_RELEASE_BALLS; // Wert bei Initialisierung um due Ballzuführung zu optimieren
+
+
+    private static final String LIGHT_BARRIER = "/home/pi/Wurfbot/PeripherieAnsteuerung/Light_Barrier.py";
+    private static final String CAMERA = "/home/pi/Wurfbot/PeripherieAnsteuerung/Camera.py";
+    private static final String TURRET = "/home/pi/Wurfbot/PeripherieAnsteuerung/Turret.py";
+    private static final String UART = "/home/pi/Wurfbot/PeripherieAnsteuerung/UART.py";
+    private static final String INITIALIZATION_WURFBOT = "/home/pi/Wurfbot/PeripherieAnsteuerung/Turret_Position_Initialization.py";
 
     public String getDcSPEED() {
         return dcSPEED;
@@ -60,30 +60,47 @@ public class Logic {
      */
     public Logic() throws IOException, InterruptedException {
         loadVariableContent();
-        moveToInitialPosition();
     }
 
-    public void loadVariableContent() {
-        TURRET_DIST_MIDDLE = Integer.parseInt(PropertyFileHandler.getPropertyFile("TURRET_DIST_MIDDLE"));
-        MM_TO_STEP_CONVERSION = Double.parseDouble(PropertyFileHandler.getPropertyFile("MM_TO_STEP_CONVERSION"));
-        PIXEL_TO_STEP_CONVERSION = Double.parseDouble(PropertyFileHandler.getPropertyFile("PIXEL_TO_STEP_CONVERSION"));
+    public String loadVariableContent() {
+        //Autonomer Ablauf
+        //PIXEL_TO_STEP_CONVERSION = Integer.parseInt(PropertyFileHandler.getPropertyFile("PIXEL_TO_STEP_CONVERSION"));
+        //PIXEL_TO_STEP_CONVERSION = Double.parseDouble(PropertyFileHandler.getPropertyFile("PIXEL_TO_STEP_CONVERSION"));
         DC_STOP_SIGNAL = PropertyFileHandler.getPropertyFile("DC_STOP_SIGNAL"); 
-        BALL_COUNTER = Integer.parseInt(PropertyFileHandler.getPropertyFile("BALL_COUNTER"));
+        BALL_COUNTER =  5;//Integer.parseInt(PropertyFileHandler.getPropertyFile("BALL_COUNTER"));
         dcSPEED = PropertyFileHandler.getPropertyFile("dcSPEED");
         LOGLEVEL = PropertyFileHandler.getPropertyFile("LogLevel");
-        SLEEPTIME = Integer.parseInt(PropertyFileHandler.getPropertyFile("SLEEPTIME"));
+        SLEEPTIME = 200;//Integer.parseInt(PropertyFileHandler.getPropertyFile("SLEEPTIME"));
 
+        //Initialization
+        TURRET_DIST_MIDDLE = Integer.parseInt(PropertyFileHandler.getPropertyFile("TURRET_DIST_MIDDLE"));
+        STEPPS_RELEASE_BALLS = PropertyFileHandler.getPropertyFile("STEPPS_RELEASE_BALLS");
+        
         PrenLogger.setCurrentLoglevel(PrenLogger.LogLevel.valueOf(LOGLEVEL));
-
+        String values = ("<b>Folgende Werte wurden aus dem config.properties geladen: </b><br/><br/>"
+                + "<b>Autonomer Ablauf: </b><br/>"
+                + "PIXEL_TO_STEP_CONVERSION : " + PIXEL_TO_STEP_CONVERSION + "<br/>"
+                + "DC_STOP_SIGNAL : " + DC_STOP_SIGNAL + "<br/>"
+                + "BALL_COUNTER : " + BALL_COUNTER + "<br/>"
+                + "dcSPEED : " + dcSPEED + "<br/>"
+                + "LogLevel : " + LOGLEVEL + "<br/>"
+                + "SleepTime : " + SLEEPTIME + "<br/><br/>"
+                + "<b>Initialization: </b><br/>"
+                + "TURRET_DIST_MIDDLE : " + TURRET_DIST_MIDDLE + "<br/>"
+                + "STEPPS_RELEASE_BALLS : " + STEPPS_RELEASE_BALLS);
+                
         logger.log(PrenLogger.LogLevel.DEBUG, "Folgende Werte wurden aus dem config.properties geladen: \n"
-                + "TURRET_DIST_MIDDLE : " + TURRET_DIST_MIDDLE + "\n"
-                + "MM_TO_STEP_CONVERSION : " + MM_TO_STEP_CONVERSION + "\n"
+                + "Autonomer Ablauf: \n"
                 + "PIXEL_TO_STEP_CONVERSION : " + PIXEL_TO_STEP_CONVERSION + "\n"
                 + "DC_STOP_SIGNAL : " + DC_STOP_SIGNAL + "\n"
                 + "BALL_COUNTER : " + BALL_COUNTER + "\n"
                 + "dcSPEED : " + dcSPEED + "\n"
                 + "LogLevel : " + LOGLEVEL + "\n"
-                + "SleepTime : " + SLEEPTIME);
+                + "SleepTime : " + SLEEPTIME + "\n"
+                + "Initialization: \n"
+                + "TURRET_DIST_MIDDLE : " + TURRET_DIST_MIDDLE + "\n"
+                + "STEPPS_RELEASE_BALLS : " + STEPPS_RELEASE_BALLS);
+        return values;
     }
 
     /**
@@ -92,8 +109,7 @@ public class Logic {
      * @throws java.io.IOException
      * @throws java.lang.InterruptedException
      */
-    public void moveToInitialPosition() throws IOException, InterruptedException {
-
+    public void startInitalization() throws IOException, InterruptedException {
         TurretPositionInitialization turretPositionInitialization = new TurretPositionInitialization(INITIALIZATION_WURFBOT, new ArrayList<String>());
         turretPositionInitialization.runPythonScript();
         String signal = turretPositionInitialization.evaluateScriptOutput();
@@ -102,10 +118,12 @@ public class Logic {
             throw new IOException("Initilization failed");
         }
         turretPositionInitialization.stopPythonProcess();
-        Thread.sleep(100);
+        Thread.sleep(10);
         // move to middle
         positionTurret(TURRET_DIST_MIDDLE, "1");
         logger.log(PrenLogger.LogLevel.DEBUG, "Initialisierung fertig gestellt");
+        releaseBalls(STEPPS_RELEASE_BALLS);
+        System.out.println("Wurfbot Initialisierung erfolgreich");
     }
 
     /**
@@ -116,7 +134,7 @@ public class Logic {
      * @throws InterruptedException
      * @throws java.io.IOException
      */
-    public void initialRun() throws InterruptedException, IOException {
+    public void wurfbot3000Start() throws InterruptedException, IOException {
         int camSteps = getCalculatedStepsFromCamera();
         if (camSteps != 0) {
             logger.log(PrenLogger.LogLevel.DEBUG, "Start ausrichtung");
@@ -128,7 +146,7 @@ public class Logic {
         startDCEngine();
         Thread.sleep(2000);
         for (int i = 1; i <= BALL_COUNTER; i++) {
-            releaseBalls();
+            releaseBalls("0");
             logger.log(PrenLogger.LogLevel.DEBUG, "Ball " + i + " geschossen");
             Thread.sleep(SLEEPTIME);
         }
@@ -143,16 +161,16 @@ public class Logic {
     private int getCalculatedStepsFromCamera() throws IOException, InterruptedException {
         double steps = 0;
         //Foto aufnehmen
-        logger.log(PrenLogger.LogLevel.DEBUG, "Start Camera");
+        //logger.log(PrenLogger.LogLevel.DEBUG, "Start Camera");
         BildVonWebcamAufnehmen pictureFromWebcam = new BildVonWebcamAufnehmen(CAMERA, new ArrayList<String>());
         pictureFromWebcam.runPythonScript();
         pictureFromWebcam.stopPythonProcess();
-        logger.log(PrenLogger.LogLevel.DEBUG, "Stop Camera");
+        //logger.log(PrenLogger.LogLevel.DEBUG, "Stop Camera");
         //Foto auswerten
         BildAuswertungKorb bildauswertung = new BildAuswertungKorb();
         int stepsInPixel = bildauswertung.bildAuswerten();
         //System.out.println("Steps in Pixel: " + stepsInPixel);
-        steps = stepsInPixel / PIXEL_TO_STEP_CONVERSION; // int / double --> double
+        steps = stepsInPixel / 3;//PIXEL_TO_STEP_CONVERSION; // int / double --> double
         //System.out.println("CAM: Nach Berechnung, also Anzahl Schritte" + steps);
         steps = (int) Math.round(steps);
         //System.out.println("CAM: Nach Berechnung GERUNDET, also Anzahl Schritte" + steps);
@@ -222,8 +240,10 @@ public class Logic {
 //        stepperFeedingBalls.stopPythonProcess();
 //        Thread.sleep(500);
 //    }
-    private void releaseBalls() throws IOException, InterruptedException {
-        StepperMagazine stepperFeedingBalls = new StepperMagazine(LIGHT_BARRIER, new ArrayList<String>());
+    private void releaseBalls(String stepps) throws IOException, InterruptedException {
+        ArrayList<String> argsP = new ArrayList<>();
+        argsP.add(stepps);
+        StepperMagazine stepperFeedingBalls = new StepperMagazine(LIGHT_BARRIER, argsP);
         stepperFeedingBalls.runPythonScript();
 
         String signal = stepperFeedingBalls.evaluateScriptOutput();
@@ -233,7 +253,7 @@ public class Logic {
         }
 
         stepperFeedingBalls.stopPythonProcess();
-        Thread.sleep(500);
+        Thread.sleep(SLEEPTIME);
     }
 
 }

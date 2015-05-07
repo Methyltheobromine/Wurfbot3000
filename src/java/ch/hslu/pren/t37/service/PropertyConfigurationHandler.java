@@ -7,9 +7,6 @@ package ch.hslu.pren.t37.service;
 
 import ch.hslu.pren.t37.logic.PropertyFileHandler;
 import java.io.FileNotFoundException;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -20,13 +17,13 @@ public class PropertyConfigurationHandler {
     enum ValueType {
 
         TURRET_DIST_MIDDLE,
-        MM_TO_STEP_CONVERSION,
         PIXEL_TO_STEP_CONVERSION,
         DC_STOP_SIGNAL,
         BALL_COUNTER,
         dcSPEED,
         LogLevel,
-        SLEEPTIME
+        SLEEPTIME,
+        STEPPS_RELEASE_BALLS
     }
 
     public String setValue(String message) {
@@ -37,21 +34,20 @@ public class PropertyConfigurationHandler {
             
             switch (valueType) {
                 case TURRET_DIST_MIDDLE:
-                case MM_TO_STEP_CONVERSION:
                 case PIXEL_TO_STEP_CONVERSION:
                 case DC_STOP_SIGNAL:
                 case BALL_COUNTER:
                 case dcSPEED:
                 case LogLevel:
                 case SLEEPTIME:
+                case STEPPS_RELEASE_BALLS:
                     PropertyFileHandler.setPropertyFile(splittedMessage[0], splittedMessage[1]);
-                    feedback = splittedMessage[0] + " erfolgreich geänder zu: " + splittedMessage[1];
+                    feedback = splittedMessage[0] + " erfolgreich geändert zu: " + splittedMessage[1];
                     break;
                 default:
                     feedback = "Invalid Configuration Input";
                     break;
             }
-            
             return feedback;
         } catch (FileNotFoundException ex) {
             return "Error";
