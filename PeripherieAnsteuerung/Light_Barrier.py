@@ -43,9 +43,9 @@ for i in range(0,20):
 
 while GPIO.input(5)==0:
   GPIO.output(STEP, True)
-  time.sleep(0.005)
+  time.sleep(0.001)
   GPIO.output(STEP, False)
-  time.sleep(0.005) 
+  time.sleep(0.001) 
   
 #Ball2
 for i in range(0,20):
@@ -68,9 +68,9 @@ for i in range(0,20):
 
 while GPIO.input(5)==0:
   GPIO.output(STEP, True)
-  time.sleep(0.005)
+  time.sleep(0.001)
   GPIO.output(STEP, False)
-  time.sleep(0.005) 
+  time.sleep(0.001) 
   
 #Ball3
 for i in range(0,20):
@@ -93,9 +93,9 @@ for i in range(0,20):
 
 while GPIO.input(5)==0:
   GPIO.output(STEP, True)
-  time.sleep(0.005)
+  time.sleep(0.001)
   GPIO.output(STEP, False)
-  time.sleep(0.005) 
+  time.sleep(0.001) 
   
 #Ball4
 for i in range(0,20):
@@ -118,9 +118,9 @@ for i in range(0,20):
 
 while GPIO.input(5)==0:
   GPIO.output(STEP, True)
-  time.sleep(0.005)
+  time.sleep(0.001)
   GPIO.output(STEP, False)
-  time.sleep(0.005) 
+  time.sleep(0.001) 
   
 #Ball5
 for i in range(0,20):
@@ -143,9 +143,9 @@ for i in range(0,20):
 
 while GPIO.input(5)==0:
   GPIO.output(STEP, True)
-  time.sleep(0.005)
+  time.sleep(0.001)
   GPIO.output(STEP, False)
-  time.sleep(0.005) 
+  time.sleep(0.001) 
   
 for i in range(0,stepps):
   GPIO.output(STEP, True)
