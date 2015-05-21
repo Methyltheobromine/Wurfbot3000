@@ -1,9 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ch.hslu.pren.t37.camera;
+
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -14,22 +10,33 @@ import org.opencv.imgproc.Imgproc;
 import ch.hslu.pren.t37.Logger.PrenLogger;
 
 /**
- *
- * @author Severin
+ * Evaluates the Target in the Picture.
+ * 
+ * @author Team 37
  */
-public class BildAuswertungKorb {
+public class PictureEvaluator {
     
     private PrenLogger logger;
 
+    /**
+     * Loads the Native Library needed for OpenCV.
+     */
     static {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-    public int bildAuswerten() {
+    /**
+     * Uses the previously taken picture and evaluates it.
+     * By using Template Matching the target picture is searched inside the main Picture.
+     * Furthermore, it calculate the distance between the middle of the target and the main Picture.    
+     * 
+     * @return the calculated distance measured in pixel's which the Turret has to turn.
+     */
+    public int evaluatePicture() {
       
         //Bild in dem gesucht werden soll
         String inFile = "/home/pi/Wurfbot/Template_Korb/camera.jpg"; 
-        //das Bild dass im infile gesucht wird
+        //das Bild dass im infile gesucht wird (also der Korb)
         String templateFile = "/home/pi/Wurfbot/Template_Korb/korb.jpg";
         //Lösung wird in diesem Bild präsentiert
         String outFile = "/home/pi/Wurfbot/Template_Korb/LoesungsBild.jpg";
@@ -83,10 +90,6 @@ public class BildAuswertungKorb {
         mitteKorb = (topRight.x - topLeft.x) / 2;
         mitteKorb = topLeft.x + mitteKorb;
         differnez = mitteKorb - mittePicture;
-        
-        logger.log(PrenLogger.LogLevel.DEBUG, "Mitte Korb: " + mitteKorb);
-        logger.log(PrenLogger.LogLevel.DEBUG, "Mitte Bild: " + mittePicture);
-        logger.log(PrenLogger.LogLevel.DEBUG, "Differenz: " + differnez + "\nWenn Differnez negativ, nach rechts drehen");
         
         return (int)differnez;
     }    

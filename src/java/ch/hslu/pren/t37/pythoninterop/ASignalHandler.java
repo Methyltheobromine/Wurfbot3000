@@ -25,7 +25,7 @@ public abstract class ASignalHandler implements ISignalHandler {
     /**
      * Gets the current Script Arguments.
      *
-     * @return ArrayList<String> Script Arguments
+     * @return list of Script Arguments to be passed to the python-script.
      */
     public List<String> getScriptArguments() {
         return _scriptArguments;
@@ -34,7 +34,7 @@ public abstract class ASignalHandler implements ISignalHandler {
     /**
      * Sets the Script Arguments.
      *
-     * @param scriptArguments
+     * @param scriptArguments to be passed to the python-script.
      */
     public void setScriptArguments(final List<String> scriptArguments) {
         this._scriptArguments = scriptArguments;
@@ -49,6 +49,9 @@ public abstract class ASignalHandler implements ISignalHandler {
         return _pythonScriptPath;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setPythonScriptPath(final String _pythonScriptPath) {
         this._pythonScriptPath = _pythonScriptPath;
@@ -72,6 +75,9 @@ public abstract class ASignalHandler implements ISignalHandler {
         this._pythonHandler = _pythonHandler;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void stopPythonProcess() throws InterruptedException {
         if (_pythonHandler != null) {
@@ -79,6 +85,9 @@ public abstract class ASignalHandler implements ISignalHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void runPythonScript() throws IOException {
         _pythonHandler = new PythonHandler(getPythonScriptPath(), getScriptArguments());

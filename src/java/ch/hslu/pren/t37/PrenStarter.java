@@ -1,15 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ch.hslu.pren.t37;
 
 import ch.hslu.pren.t37.logic.Logic;
 
+/**
+ * Starter class used before the Service was written.
+ *
+ * @author Team 37
+ */
 public class PrenStarter {
 
     /**
+     * Main method.
+     *
      * @param args the command line arguments
      * @throws java.lang.Exception
      */
@@ -19,6 +21,6 @@ public class PrenStarter {
         Logic controllerLogic = new Logic();
         controllerLogic.wurfbot3000Start();
 
-        System.out.println("-- Finish --");   
+        System.out.println("-- Finish --");
     }
 }

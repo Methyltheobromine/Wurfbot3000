@@ -1,22 +1,22 @@
-package ch.hslu.pren.t37.logic;
+package ch.hslu.pren.t37.camera;
 
 import ch.hslu.pren.t37.pythoninterop.ASignalHandler;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
- * Script Handler for the Stepper-Turret.
- *
+ * Script Handler for the Camera.
+ * 
  * @author Team 37
  */
-public class StepperTurret extends ASignalHandler {
+public class CameraPictureHandler extends ASignalHandler {
 
     /**
      * Constructor.
-     *
+     * 
      * @param scriptPath which specifies the script location.
      * @param scriptArguments list of arguments to be passed to the script.
      */
-    public StepperTurret(final String scriptPath, final List<String> scriptArguments) {
+    public CameraPictureHandler(String scriptPath, ArrayList<String> scriptArguments) {
         super();
         super.setPythonScriptPath(scriptPath);
         super.setScriptArguments(scriptArguments);
@@ -24,7 +24,6 @@ public class StepperTurret extends ASignalHandler {
 
     /**
      * {@inheritDoc}.
-     *
      * @return an Empty String => this Handler has no Output.
      */
     @Override

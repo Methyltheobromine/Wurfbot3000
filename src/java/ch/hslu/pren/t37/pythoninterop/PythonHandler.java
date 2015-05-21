@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Creates the Python Process and handles the output.
+ *
  * @author Team 37
  */
 public final class PythonHandler {
@@ -17,32 +18,33 @@ public final class PythonHandler {
     /**
      * Default Constructor.
      */
-    public PythonHandler(){
-        
+    public PythonHandler() {
     }
-    
+
     /**
      * Overloaded Constructor starts the Scripts.
-     * @param scriptPath
-     * @param scriptArguments
-     * @throws IOException 
+     *
+     * @param scriptPath which specifies the script location.
+     * @param scriptArguments list of arguments to be passed to the script.
+     * @throws IOException if an IO-Read/Write exception occurs.
      */
-    public PythonHandler(final String scriptPath,final  List<String> scriptArguments) throws IOException {
+    public PythonHandler(final String scriptPath, final List<String> scriptArguments) throws IOException {
         startPythonScript(scriptPath, scriptArguments);
     }
 
     /**
      * Starts the Python Script.
-     * @param scriptName
-     * @param scriptArguments
-     * @throws IOException 
+     *
+     * @param scriptName which specifies the script location.
+     * @param scriptArguments list of arguments to be passed to the script.
+     * @throws IOException if an IO-Read/Write exception occurs.
      */
-    public void startPythonScript(final String scriptName,final  List<String> scriptArguments) throws IOException {
-        final ArrayList<String> pythonCommand=new ArrayList<>();
+    public void startPythonScript(final String scriptName, final List<String> scriptArguments) throws IOException {
+        final ArrayList<String> pythonCommand = new ArrayList<>();
         pythonCommand.add("python");
         pythonCommand.add(scriptName);
-                
-        for(String arg: scriptArguments){
+
+        for (String arg : scriptArguments) {
             pythonCommand.add(arg);
         }
         final ProcessBuilder processBuilder = new ProcessBuilder(pythonCommand);
@@ -51,8 +53,9 @@ public final class PythonHandler {
 
     /**
      * Gets the Output produced by the Python Script.
+     *
      * @return Script Output
-     * @throws java.io.IOException 
+     * @throws IOException if an IO-Read/Write exception occurs.
      */
     public String getPythonOutput() throws IOException {
         if (!isScriptInitialized()) {
@@ -66,17 +69,19 @@ public final class PythonHandler {
 
     /**
      * Stops the Python Process.
-     * @throws InterruptedException 
+     *
+     * @throws InterruptedException if the loading is interrupted.
      */
-    public void stopPythonProcess() throws InterruptedException  {
+    public void stopPythonProcess() throws InterruptedException {
         if (isScriptInitialized()) {
-          //  _pythonProcess.destroy();
+            //  _pythonProcess.destroy();
             _pythonProcess.waitFor();
         }
     }
 
     /**
      * Checks if the Python Process is initialised.
+     *
      * @return true if script is initialised
      */
     private boolean isScriptInitialized() {

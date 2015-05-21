@@ -147,6 +147,7 @@ while GPIO.input(5)==0:
   GPIO.output(STEP, False)
   time.sleep(0.001) 
   
+#Schluss-Steps fahren (die aus dem Config.property File)  
 for i in range(0,stepps):
   GPIO.output(STEP, True)
   time.sleep(0.001)
@@ -155,6 +156,3 @@ for i in range(0,stepps):
   
 print 'Ready'
 GPIO.cleanup()
-
-
-                        
