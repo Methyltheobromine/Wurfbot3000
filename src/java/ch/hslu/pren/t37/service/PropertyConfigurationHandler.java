@@ -8,8 +8,6 @@ import java.io.FileNotFoundException;
  *
  * @author Team 37
  */
-
-
 public class PropertyConfigurationHandler {
 
     private PropertyFileHandler _fileHandler;
@@ -54,7 +52,7 @@ public class PropertyConfigurationHandler {
                 case SLEEPTIME:
                 case STEPPS_RELEASE_BALLS:
                     PropertyFileHandler.setPropertyFile(splittedMessage[0], splittedMessage[1]);
-                    feedback = splittedMessage[0] + " erfolgreich geändert zu: " + splittedMessage[1];
+                    feedback = "CHANGE Property:<br/>" + splittedMessage[0] + " <br/>erfolgreich geändert zu:<br/> " + splittedMessage[1] + "<br/>Property Reloaded";
                     break;
                 default:
                     feedback = "Invalid Configuration Input";

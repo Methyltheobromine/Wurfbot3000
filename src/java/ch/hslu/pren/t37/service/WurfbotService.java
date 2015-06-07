@@ -51,19 +51,24 @@ public class WurfbotService {
     @OnOpen
     public void onOpen(Session session) throws IOException {
         session.getBasicRemote().sendText("Start on Open");
-        session.addMessageHandler((MessageHandler.Whole<String>) (String message) -> {
-            String msg = handleMessage(message);
-            try {
-                session.getBasicRemote().sendText(msg);
-            } catch (IOException ex) {
-                Logger.getLogger(WurfbotService.class.getName()).log(Level.SEVERE, null, ex);
+        session.addMessageHandler(new MessageHandler.Whole<String>() {
+
+            /**
+            * When a user sends a message to the server, this method will intercept the
+            * message and allow us to react to it. For now the message is read as a
+            * String.
+            */
+            @Override
+            public void onMessage(String message) {
+                String msg = handleMessage(message);
+                try {
+                    session.getBasicRemote().sendText(msg);
+                } catch (IOException ex) {
+
+                    Logger.getLogger(WurfbotService.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-        } /**
-         * When a user sends a message to the server, this method will intercept
-         * the message and allow us to react to it. For now the message is read
-         * as a String.
-         */
-        );
+        });
         session.getBasicRemote().sendText("Finsihed on Open");
     }
 

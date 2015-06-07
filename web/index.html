@@ -9,32 +9,32 @@
 
         <style>
             #links{
-                width: 50%;
                 float: left;
-                height: 250px;
+                width: 50%;
+                height: 100%;
             }
 
             #rechts{
                 float: right;
                 width: 50%;
-                height: 250px;
+                height: 100%;
             }
         </style>
     </head>
 
     <body>
         <div id="website">
-            <div id="header" class="rund">
-                <br /> 
-                <h1><br> Pren 2 - Team 37 </h1>
+            
+            <div id="header">
+                <h1> Pren 2 - Team 37 </h1>
                 <p> Wurfbot3000</p>
                 <hr />
-
             </div>
+            
             <div id="main">
                 <div>
                     <div id="links">
-                        <br /> 	
+                        <br> 	
                         Bitte Verbindung zuerst aufbauen:
                         <button id="buttonOpenClose" class="button_klasse rot" type="button" onclick="openSocket();" >Verbindung aufbauen</button>
                         <div>
@@ -43,40 +43,28 @@
                             <button id="buttonConfig" class="button_klasse blau" type="button" onclick="getProperties();" >Config-File auslesen</button>
                             <button id="buttonClear" class="button_klasse blau" type="button" onclick="clearLogs();" >Clear Log</button>
                         </div>
-                        <br /> 
+                        <br> 
                         <div>
-                            Bitte den neuen Wert passend zum Schluessel eingeben.  Bsp.:   dcSPEED;99999 <br /> 
+                            Neuen Wert passend zum Schluessel eingeben.<br>
+                            Bsp.: dcSPEED;99999 <br> 
                             <input type="text" id="messageinput"/>
                         </div>
                         <div>
                             <button id="buttonConfig" class="button_klasse blau" type="button" onclick="changeConfigFile();" >Konfigurationsparameter anpassen</button>
                         </div>
+                        <div>
+                            LogAusgabe:
+                            <!-- Server responses get written here -->
+                            <div id="messages"></div>
+                        </div>
                     </div>
 
                     <div id="rechts">
-                        <br /> <br /> 
+                        <br> <br> 
                         <div id="property"></div>
                     </div>
                 </div>
-
-                <div>
-                    <div id="links">
-                        LogAusgabe:
-                        <!-- Server responses get written here -->
-                        <div id="messages"></div>
-                    </div>
-
-                    <div id="rechts">
-                        <div> 
-                            <img src="wurfbot.jpg" alt="CHEF" />
-                        </div>
-                    </div>
-                </div>
-
             </div>
-
-
-
         </div>
 
         <!-- Script to utilise the WebSocket -->
@@ -88,7 +76,6 @@
             var propertyconfig = document.getElementById("property");
 
             function initialisierungWurfbot() {
-                //messages.innerHTML = "";
                 if (checkConnection() === 1) {
                     return;
                 }
@@ -97,12 +84,7 @@
                 webSocket.send(text);
             }
 
-            function clearLogs() {
-                messages.innerHTML = "";
-            }
-
             function startWurfbot() {
-                //messages.innerHTML = "";
                 if (checkConnection() === 1) {
                     return;
                 }
@@ -112,7 +94,6 @@
             }
 
             function changeConfigFile() {
-                //messages.innerHTML = "";
                 if (checkConnection() === 1) {
                     return;
                 }
@@ -127,12 +108,24 @@
                 var text = "GETCONF";
                 webSocket.send(text);
             }
-
+            
+            function clearLogs() {
+                messages.innerHTML = "";
+                propertyconfig.innerHTML = "";
+            }
+            
             function writeResponse(text) {
                 var textLen = text.length;
                 if (textLen < 150) {
-                    messages.innerHTML += "<br/>" + text;
+                    if(textLen < 60){
+                        messages.innerHTML += "<br/>" + text;
+                    } else {
+                        messages.innerHTML += "<br/>" + text;
+                        propertyconfig.innerHTML = "";
+                        webSocket.send("GETCONF");
+                    }
                 } else {
+                    propertyconfig.innerHTML = "";
                     propertyconfig.innerHTML = text;
                 }
 
@@ -164,10 +157,9 @@
             function checkConnection() {
                 if (webSocket === undefined || webSocket.readyState === WebSocket.CLOSED) {
                     writeResponse("Bitte zuerst Verbindung aufbauen. Merrciiiii")
-
                     return 1;
                 } else {
-                    //writeResponse("Verbidnung ok");
+                    //writeResponse("Verbindung ok");
                     return 0;
                 }
             }
@@ -192,10 +184,7 @@
                 }
 
                 init();
-                //webSocket.send("INITPOS");
-                //writeResponse("Vor onOpen");
-                //webSocket.send("INITPOS");
-                //webSocket.onopen();
+                
                 document.getElementById("buttonOpenClose").innerHTML = 'Verbindung schliessen';
                 document.getElementById("buttonOpenClose").className = 'button_klasse gruen';
             }

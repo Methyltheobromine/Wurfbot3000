@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 /**
  * Executes the main controller logic.
- * 
+ *
  * @author Team 37
  */
 public final class Logic {
@@ -37,7 +37,6 @@ public final class Logic {
     private static int TURRET_DIST_MIDDLE; // Wert bei Initialisierung um in die Mitte zu fahren
     private static String STEPPS_RELEASE_BALLS; // Wert bei Initialisierung um due Ballzuführung zu optimieren
 
-
     private static final String LIGHT_BARRIER = "/home/pi/Wurfbot/PeripherieAnsteuerung/Light_Barrier.py";
     private static final String CAMERA = "/home/pi/Wurfbot/PeripherieAnsteuerung/Camera.py";
     private static final String TURRET = "/home/pi/Wurfbot/PeripherieAnsteuerung/Turret.py";
@@ -46,6 +45,7 @@ public final class Logic {
 
     /**
      * Gets the current DC-Speed.
+     *
      * @return DC-Speed represented as a String.
      */
     public String getDcSPEED() {
@@ -54,23 +54,25 @@ public final class Logic {
 
     /**
      * Constructor.
-     * 
+     *
      * @throws IOException if an IO-Read/Write exception occurs.
-     * @throws InterruptedException if the loading is interrupted. 
+     * @throws InterruptedException if the loading is interrupted.
      */
     public Logic() throws IOException, InterruptedException {
         loadVariableContent();
     }
 
     /**
-     * Loads the content of the Property-File and sets them to their specific variables.
+     * Loads the content of the Property-File and sets them to their specific
+     * variables.
+     *
      * @return A HTML-Formated String containing all properties.
      */
     public String loadVariableContent() {
         //Autonomer Ablauf
         PIXEL_TO_STEP_CONVERSION = Double.parseDouble(PropertyFileHandler.getPropertyFile("PIXEL_TO_STEP_CONVERSION"));
-        DC_STOP_SIGNAL = PropertyFileHandler.getPropertyFile("DC_STOP_SIGNAL"); 
-        BALL_COUNTER =  Integer.parseInt(PropertyFileHandler.getPropertyFile("BALL_COUNTER"));
+        DC_STOP_SIGNAL = PropertyFileHandler.getPropertyFile("DC_STOP_SIGNAL");
+        BALL_COUNTER = Integer.parseInt(PropertyFileHandler.getPropertyFile("BALL_COUNTER"));
         dcSPEED = PropertyFileHandler.getPropertyFile("dcSPEED");
         LOGLEVEL = PropertyFileHandler.getPropertyFile("LogLevel");
         SLEEPTIME = Integer.parseInt(PropertyFileHandler.getPropertyFile("SLEEPTIME"));
@@ -78,7 +80,7 @@ public final class Logic {
         //Initialization
         TURRET_DIST_MIDDLE = Integer.parseInt(PropertyFileHandler.getPropertyFile("TURRET_DIST_MIDDLE"));
         STEPPS_RELEASE_BALLS = PropertyFileHandler.getPropertyFile("STEPPS_RELEASE_BALLS");
-        
+
         PrenLogger.setCurrentLoglevel(PrenLogger.LogLevel.valueOf(LOGLEVEL));
         String values = ("<b>Folgende Werte wurden aus dem config.properties geladen: </b><br/><br/>"
                 + "<b>Autonomer Ablauf: </b><br/>"
@@ -91,15 +93,16 @@ public final class Logic {
                 + "<b>Initialization: </b><br/>"
                 + "TURRET_DIST_MIDDLE : " + TURRET_DIST_MIDDLE + "<br/>"
                 + "STEPPS_RELEASE_BALLS : " + STEPPS_RELEASE_BALLS);
-                
+
         return values;
     }
 
     /**
-     * Moves the turret to its initial position and initialises the slice to release the Balls.
-     * 
+     * Moves the turret to its initial position and initialises the slice to
+     * release the Balls.
+     *
      * @throws IOException if an IO-Read/Write exception occurs.
-     * @throws InterruptedException if the loading is interrupted. 
+     * @throws InterruptedException if the loading is interrupted.
      */
     public void startInitalization() throws IOException, InterruptedException {
         TurretPositionInitialization turretPositionInitialization = new TurretPositionInitialization(INITIALIZATION_WURFBOT, new ArrayList<String>());
@@ -123,7 +126,7 @@ public final class Logic {
      * the magazine
      *
      * @throws IOException if an IO-Read/Write exception occurs.
-     * @throws InterruptedException if the loading is interrupted. 
+     * @throws InterruptedException if the loading is interrupted.
      */
     public void wurfbot3000Start() throws InterruptedException, IOException {
         int camSteps = getCalculatedStepsFromCamera();
@@ -131,6 +134,7 @@ public final class Logic {
             String direction = camSteps < 0 ? "0" : "1";
             positionTurret(abs(camSteps), direction);
         }
+        evaluateDCEngineSpeed(camSteps);
         startDCEngine();
         Thread.sleep(2000);
         for (int i = 1; i <= BALL_COUNTER; i++) {
@@ -138,6 +142,21 @@ public final class Logic {
             Thread.sleep(SLEEPTIME);
         }
         dcEngineStop();
+    }
+
+    private void evaluateDCEngineSpeed(int stepps) {
+        stepps = abs(stepps);
+        int dcSpeed = Integer.parseInt(dcSPEED);
+        if (stepps >= 40) {
+            //+2
+            dcSpeed = dcSpeed + 2;
+        } else if (stepps >= 13) {
+            //+1
+            dcSpeed = dcSpeed + 1;
+        } else {
+            //+0
+        }
+        dcSPEED = dcSpeed + "";
     }
 
     /**
@@ -180,7 +199,7 @@ public final class Logic {
      * Starts the DC Engine.
      *
      * @throws IOException if an IO-Read/Write exception occurs.
-     * @throws InterruptedException if the loading is interrupted. 
+     * @throws InterruptedException if the loading is interrupted.
      */
     private void startDCEngine() throws InterruptedException, IOException {
         ArrayList<String> argsP = new ArrayList<>();
@@ -194,7 +213,7 @@ public final class Logic {
      * Stops the DC Engine.
      *
      * * @throws IOException if an IO-Read/Write exception occurs.
-     * @throws InterruptedException if the loading is interrupted. 
+     * @throws InterruptedException if the loading is interrupted.
      */
     private void dcEngineStop() throws IOException, InterruptedException {
         ArrayList<String> argsP = new ArrayList<>();
@@ -208,7 +227,7 @@ public final class Logic {
      * Releases the Magazine.
      *
      * @throws IOException if an IO-Read/Write exception occurs.
-     * @throws InterruptedException if the loading is interrupted. 
+     * @throws InterruptedException if the loading is interrupted.
      */
     private void releaseBalls(String stepps) throws IOException, InterruptedException {
         ArrayList<String> argsP = new ArrayList<>();
